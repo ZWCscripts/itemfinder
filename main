@@ -1,88 +1,10 @@
--- Mobil uyumlu, kopyalanabilir sonuç penceresi ile tüm Workspace'i tarayan script
-local player = game:GetService("Players").LocalPlayer
+-- Bunu LocalScript olarak çalıştırabilirsin!
+local workspace = game:GetService("Workspace")
 
--- Sonuçları biriktirmek için tablo
-local results = {}
-
--- Taramayı yapan fonksiyon
-local function scan(object, path)
-    path = path or object.Name
-    table.insert(results, path .. " | " .. object.ClassName)
-    for _, child in ipairs(object:GetChildren()) do
-        scan(child, path .. "/" .. child.Name)
-    end
-end
-
-scan(workspace)
-
--- Sonuçları tek bir stringe dönüştür
-local resultString = table.concat(results, "\n")
-
--- Basit bir GUI ile sonucu göster
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "TaramaSonucuGUI"
-screenGui.Parent = player:WaitForChild("PlayerGui")
-screenGui.ResetOnSpawn = false
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.7, 0, 0.55, 0)
-frame.Position = UDim2.new(0.15, 0, 0.2, 0)
-frame.BackgroundColor3 = Color3.fromRGB(34,34,34)
-frame.BackgroundTransparency = 0.25
-frame.Active = true
-frame.Draggable = true
-frame.Parent = screenGui
-
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 18)
-corner.Parent = frame
-
--- Başlık
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 36)
-title.Position = UDim2.new(0,0,0,0)
-title.Text = "Tarama Sonuçları (kopyala & bana gönder)"
-title.TextColor3 = Color3.fromRGB(0,255,255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 18
-title.BackgroundTransparency = 1
-title.Parent = frame
-
--- Kopyalanabilir TextBox
-local box = Instance.new("TextBox")
-box.Size = UDim2.new(1, -24, 1, -60)
-box.Position = UDim2.new(0, 12, 0, 40)
-box.Text = resultString
-box.TextWrapped = false
-box.TextXAlignment = Enum.TextXAlignment.Left
-box.TextYAlignment = Enum.TextYAlignment.Top
-box.ClearTextOnFocus = false
-box.MultiLine = true
-box.Font = Enum.Font.Code
-box.TextSize = 15
-box.TextColor3 = Color3.fromRGB(255,255,255)
-box.BackgroundColor3 = Color3.fromRGB(40,40,40)
-box.BackgroundTransparency = 0.09
-box.Parent = frame
-
--- Otomatik seçmek için kutuya basınca hepsini seç:
-box.Focused:Connect(function()
-    box.CursorPosition = #box.Text+1
-    box.SelectionStart = 1
+workspace.ChildAdded:Connect(function(child)
+    print("Yeni obje eklendi: "..child.Name)
 end)
 
--- Kapatma butonu
-local close = Instance.new("TextButton")
-close.Size = UDim2.new(0,32,0,32)
-close.Position = UDim2.new(1,-38,0,4)
-close.Text = "X"
-close.Font = Enum.Font.GothamBold
-close.TextSize = 17
-close.TextColor3 = Color3.fromRGB(255, 70, 70)
-close.BackgroundTransparency = 0.2
-close.BackgroundColor3 = Color3.fromRGB(40,40,40)
-close.Parent = frame
-
-close.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
+workspace.ChildRemoved:Connect(function(child)
+    print("Obje silindi: "..child.Name)
 end)
